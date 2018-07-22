@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_transfer_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Дата"/>
+
+    <Button
+        android:id="@+id/btn_transfer_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="01.01.2018"/>
+
+    <TextView
+        android:id="@+id/tv_transfer_account_one"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Счёт 1"/>
+
+    <Spinner
+        android:id="@+id/spinner_transfer_account_one"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_transfer_account_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Счёт 2"/>
+
+    <Spinner
+        android:id="@+id/spinner_transfer_account_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_transfer_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Сумма"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/et_transfer_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:text="300.00"/>
+
+        <Spinner
+            android:id="@+id/spinner_transfer_currency"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_weight="2"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_transfer_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Комментарий"/>
+
+    <EditText
+        android:id="@+id/et_transfer_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Перевод денег"/>
+
+</LinearLayout>
