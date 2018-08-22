@@ -5,7 +5,7 @@ import android.provider.BaseColumns;
 
 public class DbContract {
 
-    private static final Uri BASE_CONTENT_URI = Uri.parse("content://ru.kaooak.android.homebookkeeping.provider");
+    private static final Uri BASE_CONTENT_URI = Uri.parse("content://com.kaooak.android.homebookkeeping.provider");
 
     public static class AccountsTable {
         public static final String NAME = "accounts";
