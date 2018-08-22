@@ -36,6 +36,11 @@
                   android:parentActivityName=".activities.MainActivity">
         </activity>
 
+        <provider
+            android:authorities="com.kaooak.android.homebookkeeping.provider"
+            android:name=".provider.AccountContentProvider">
+        </provider>
+
     </application>
 
 </manifest>

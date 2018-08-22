@@ -1,21 +1,30 @@
 package com.kaooak.android.homebookkeeping.database;
 
-public class DbScheme {
+import android.net.Uri;
+import android.provider.BaseColumns;
 
-    public class AccountsTable {
+public class DbContract {
+
+    private static final Uri BASE_CONTENT_URI = Uri.parse("content://ru.kaooak.android.homebookkeeping.provider");
+
+    public static class AccountsTable {
         public static final String NAME = "accounts";
-        public class Columns {
+
+        public class Columns implements BaseColumns {
             public static final String UUID = "uuid";
             public static final String NAME = "name";
             public static final String CURRENCY = "currency";
             public static final String VALUE = "value";
             public static final String START_VALUE = "startValue";
         }
+
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, NAME);
     }
 
-    public class TransactionsTable {
+    public static class TransactionsTable {
         public static final String NAME = "transactions";
-        public class Columns {
+
+        public class Columns implements BaseColumns {
             public static final String UUID = "uuid";
             public static final String TYPE = "type";
             public static final String DATE = "date";
@@ -26,5 +35,7 @@ public class DbScheme {
             public static final String RATE = "rate";
             public static final String COMMENT = "comment";
         }
+
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, NAME);
     }
 }
