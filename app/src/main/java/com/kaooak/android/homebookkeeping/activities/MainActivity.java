@@ -1,11 +1,12 @@
 package com.kaooak.android.homebookkeeping.activities;
 
+import android.content.ContentUris;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -16,6 +17,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -33,10 +36,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
+    public static final String TAG = MainActivity.class.getSimpleName();
+
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
 
     private int currentFragment;
+
+    private Spinner mSpinner;
+//    private long mAccountId;
 
     private SimpleCursorAdapter mSimpleCursorAdapter;
 
@@ -44,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test_activity_accounts);
+
+        Log.d(TAG, "onCreate: ");
 
         getSupportLoaderManager().initLoader(0, null ,this);
 
@@ -54,8 +64,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         mSimpleCursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, null, new String[] { "name"}, new int[] { android.R.id.text1}, 0);
         mSimpleCursorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner spinner = toolbar.findViewById(R.id.spinner_accounts);
-        spinner.setAdapter(mSimpleCursorAdapter);
+        mSpinner = toolbar.findViewById(R.id.spinner_accounts);
+        mSpinner.setAdapter(mSimpleCursorAdapter);
+
+//        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                mAccountId = l;
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//            }
+//        });
+
 
 //        mDrawerLayout = findViewById(R.id.drawer_layout);
 //        mNavigationView = findViewById(R.id.navigation_view);
@@ -99,10 +122,30 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "onCreateOptionsMenu: ");
+
+        getMenuInflater().inflate(R.menu.menu_accounts, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected: ");
+        
         switch (item.getItemId()) {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+            case R.id.menu_accounts_new_account:
+                Intent intent = AccountActivity.getIntent(this);
+                intent.setData(null);
+                startActivity(intent);
+                return true;
+            case R.id.menu_accounts_edit_account:
+                Intent intent2 = AccountActivity.getIntent(this);
+                intent2.setData(ContentUris.withAppendedId(DbContract.AccountsTable.CONTENT_URI, mSpinner.getSelectedItemId()));
+                startActivity(intent2);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -113,16 +156,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+        Log.d(TAG, "onCreateLoader: ");
         return new CursorLoader(this, DbContract.AccountsTable.CONTENT_URI, null, null, null,null);
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        Log.d(TAG, "onLoadFinished: ");
         mSimpleCursorAdapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+        Log.d(TAG, "onLoaderReset: ");
         mSimpleCursorAdapter.swapCursor(null);
     }
     //
