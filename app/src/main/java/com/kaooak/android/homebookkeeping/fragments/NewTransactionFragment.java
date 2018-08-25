@@ -48,7 +48,7 @@ public class NewTransactionFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_new_transaction, container, false);
 
-        mRgroupTransactionType = view.findViewById(R.id.rgroup_transaction_type);
+//        mRgroupTransactionType = view.findViewById(R.id.rgroup_transaction_type);
 
         mBtnTransactionDate = view.findViewById(R.id.btn_transaction_date);
         mBtnTransactionDate.setOnClickListener(new View.OnClickListener() {
@@ -60,7 +60,7 @@ public class NewTransactionFragment extends Fragment {
 
         ArrayList<Account> list = Singleton.getInstance(getActivity()).selectAccounts();
         ArrayAdapter<Account> adp = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, list);
-        mSpinnerTransactionAccount = view.findViewById(R.id.spinner_transaction_account_one);
+//        mSpinnerTransactionAccount = view.findViewById(R.id.spinner_transaction_account_one);
         mSpinnerTransactionAccount.setAdapter(adp);
 
         mEtTransactionValue = view.findViewById(R.id.et_transaction_value);
@@ -72,18 +72,18 @@ public class NewTransactionFragment extends Fragment {
 
     public Transaction getData() {
 
-        int transactionType;
-        switch (mRgroupTransactionType.getCheckedRadioButtonId()) {
-            case R.id.rbtn_in:
-                transactionType = TransactionTypes.TYPE_PLUS;
-                break;
-            case R.id.rbtn_out:
-                transactionType = TransactionTypes.TYPE_MINUS;
-                break;
-            default:
-                transactionType = TransactionTypes.TYPE_PLUS;
-                break;
-        }
+        int transactionType = TransactionTypes.TYPE_PLUS;
+//        switch (mRgroupTransactionType.getCheckedRadioButtonId()) {
+//            case R.id.rbtn_in:
+//                transactionType = TransactionTypes.TYPE_PLUS;
+//                break;
+//            case R.id.rbtn_out:
+//                transactionType = TransactionTypes.TYPE_MINUS;
+//                break;
+//            default:
+//                transactionType = TransactionTypes.TYPE_PLUS;
+//                break;
+//        }
 
         long date = new Date().getTime();
 

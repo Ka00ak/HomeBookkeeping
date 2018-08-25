@@ -37,5 +37,6 @@ public class DbContract {
         }
 
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, NAME);
+//        public static final Uri CONTENT_ACCOUNTS_URI = Uri.withAppendedPath(BASE_CONTENT_URI, NAME + "/account");
     }
 }

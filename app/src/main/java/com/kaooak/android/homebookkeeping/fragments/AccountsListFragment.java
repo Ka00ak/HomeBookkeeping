@@ -50,7 +50,7 @@ public class AccountsListFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mRecyclerView.setAdapter(new AccountsAdapter(Singleton.getInstance(getActivity()).selectAccounts()));
 
-        mFloatingActionButton = (FloatingActionButton)  view.findViewById(R.id.button_add_account);
+        mFloatingActionButton = (FloatingActionButton)  view.findViewById(R.id.btn_add_account);
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -38,7 +38,7 @@ public class DbHelper extends SQLiteOpenHelper {
         contentValues.put(DbContract.AccountsTable.Columns.CURRENCY, account.getCurrency());
         contentValues.put(DbContract.AccountsTable.Columns.VALUE, account.getValue());
         contentValues.put(DbContract.AccountsTable.Columns.START_VALUE, account.getValue());
-        sqLiteDatabase.insert(DbContract.AccountsTable.NAME, null, contentValues);
+        long oneA = sqLiteDatabase.insert(DbContract.AccountsTable.NAME, null, contentValues);
 
         Account account2 = new Account("Счёт 2", Currencies.CURRENCY_DOLLAR,26.13, 26.13);
         ContentValues contentValues2 = new ContentValues();
@@ -47,7 +47,7 @@ public class DbHelper extends SQLiteOpenHelper {
         contentValues2.put(DbContract.AccountsTable.Columns.CURRENCY, account2.getCurrency());
         contentValues2.put(DbContract.AccountsTable.Columns.VALUE, account2.getValue());
         contentValues2.put(DbContract.AccountsTable.Columns.START_VALUE, account2.getValue());
-        sqLiteDatabase.insert(DbContract.AccountsTable.NAME, null, contentValues2);
+        long twoA = sqLiteDatabase.insert(DbContract.AccountsTable.NAME, null, contentValues2);
 
         Account account3 = new Account("Счёт 3", Currencies.CURRENCY_EURO, 18.99,18.99);
         ContentValues contentValues3 = new ContentValues();
@@ -56,11 +56,11 @@ public class DbHelper extends SQLiteOpenHelper {
         contentValues3.put(DbContract.AccountsTable.Columns.CURRENCY, account3.getCurrency());
         contentValues3.put(DbContract.AccountsTable.Columns.VALUE, account3.getValue());
         contentValues3.put(DbContract.AccountsTable.Columns.START_VALUE, account3.getValue());
-        sqLiteDatabase.insert(DbContract.AccountsTable.NAME, null, contentValues3);
+        long threeA = sqLiteDatabase.insert(DbContract.AccountsTable.NAME, null, contentValues3);
 
         sqLiteDatabase.execSQL(
-                "create table " + DbContract.TransactionsTable.NAME + " " +
-                        "(_id integer primary key autoincrement, " +
+                "create table " + DbContract.TransactionsTable.NAME + " (" +
+                        DbContract.AccountsTable.Columns._ID + " integer primary key autoincrement, " +
                         DbContract.TransactionsTable.Columns.UUID + ", " +
                         DbContract.TransactionsTable.Columns.DATE + ", " +
                         DbContract.TransactionsTable.Columns.TYPE + ", " +
@@ -72,9 +72,31 @@ public class DbHelper extends SQLiteOpenHelper {
                         DbContract.TransactionsTable.Columns.COMMENT + ")");
 
 //        Transaction t = new Transaction(account.getUUID(), TransactionTypes.TYPE_PLUS, new Date().getTime(), 300.00, Currencies.CURRENCY_RUB, "Просто плюс 300.00 рублей", TransactionTypes.TYPE_PLUS);
-//        ContentValues cv = two(t);
-//        sqLiteDatabase.insert(DbContract.TransactionsTable.NAME, null, cv);
+        ContentValues cv = new ContentValues();
+        cv.put(DbContract.TransactionsTable.Columns.DATE, new Date().getTime());
+        cv.put(DbContract.TransactionsTable.Columns.ACCOUNT_ONE_UUID, oneA);
+        cv.put(DbContract.TransactionsTable.Columns.CURRENCY, 0);
+        cv.put(DbContract.TransactionsTable.Columns.VALUE, 500);
+        cv.put(DbContract.TransactionsTable.Columns.COMMENT, "коммент");
+        long one = sqLiteDatabase.insert(DbContract.TransactionsTable.NAME, null, cv);
 //
+        ContentValues cv2 = new ContentValues();
+        cv2.put(DbContract.TransactionsTable.Columns.DATE, new Date().getTime());
+        cv2.put(DbContract.TransactionsTable.Columns.ACCOUNT_ONE_UUID, twoA);
+        cv2.put(DbContract.TransactionsTable.Columns.CURRENCY, 0);
+        cv2.put(DbContract.TransactionsTable.Columns.VALUE, 500);
+        cv2.put(DbContract.TransactionsTable.Columns.COMMENT, "коммент");
+        long two = sqLiteDatabase.insert(DbContract.TransactionsTable.NAME, null, cv2);
+
+//
+        ContentValues cv3 = new ContentValues();
+        cv3.put(DbContract.TransactionsTable.Columns.DATE, new Date().getTime());
+        cv3.put(DbContract.TransactionsTable.Columns.ACCOUNT_ONE_UUID, threeA);
+        cv3.put(DbContract.TransactionsTable.Columns.CURRENCY, 0);
+        cv3.put(DbContract.TransactionsTable.Columns.VALUE, 500);
+        cv3.put(DbContract.TransactionsTable.Columns.COMMENT, "коммент");
+        long three = sqLiteDatabase.insert(DbContract.TransactionsTable.NAME, null, cv3);
+
 //        Transaction t2 = new Transaction(account.getUUID(), new Date().getTime(), 5.00, Currencies.CURRENCY_EURO, "Просто минус 5.00 евро", TransactionTypes.TYPE_MINUS);
 //        ContentValues cv2 = two(t2);
 //        sqLiteDatabase.insert(DbContract.TransactionsTable.NAME, null, cv2);

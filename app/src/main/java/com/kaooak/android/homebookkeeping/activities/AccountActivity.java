@@ -33,7 +33,7 @@ import com.kaooak.android.homebookkeeping.fragments.AccountTransactionFragment;
 
 public class AccountActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    public static final String TAG = AccountActivity.class.getSimpleName();
+    private static final String TAG = AccountActivity.class.getSimpleName();
 
     private static final String EXTRA_UUID = "com.kaooak.android.homebookkeeping.activities.accountactivity.extra.uuid";
 
@@ -83,7 +83,7 @@ public class AccountActivity extends AppCompatActivity implements LoaderManager.
 
                 if (mUri == null) {
                     DbAsyncQueryHandler handler = new DbAsyncQueryHandler(getContentResolver());
-                    handler.startInsert(0, null, DbContract.AccountsTable.CONTENT_URI, contentValues );
+                    handler.startInsert(0, null, DbContract.AccountsTable.CONTENT_URI, contentValues);
                 } else {
                     DbAsyncQueryHandler handler = new DbAsyncQueryHandler(getContentResolver());
                     handler.startUpdate(0, null, mUri, contentValues, null, null);
@@ -199,6 +199,7 @@ public class AccountActivity extends AppCompatActivity implements LoaderManager.
             mSpinnerAccountCurrenncy.setSelection(currency);
             mEtAccountStartValue.setText(startValue);
         }
+
     }
 
     @Override

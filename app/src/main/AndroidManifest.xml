@@ -38,7 +38,8 @@
 
         <provider
             android:authorities="com.kaooak.android.homebookkeeping.provider"
-            android:name=".provider.AccountContentProvider">
+            android:name=".provider.AccountContentProvider"
+            android:exported="false">
         </provider>
 
     </application>
