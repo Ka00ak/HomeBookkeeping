@@ -20,18 +20,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activities.NewAccountActivity"
-                  android:parentActivityName=".activities.MainActivity">
-        </activity>
-
         <activity android:name=".activities.AccountActivity"
                   android:parentActivityName=".activities.MainActivity">
         </activity>
 
 
-        <activity android:name=".activities.NewTransactionActivity"
-                  android:parentActivityName=".activities.MainActivity">
-        </activity>
         <activity android:name=".activities.TransactionActivity"
                   android:parentActivityName=".activities.MainActivity">
         </activity>

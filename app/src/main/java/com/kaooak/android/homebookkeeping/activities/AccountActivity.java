@@ -7,8 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -23,13 +21,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TabHost;
 
 import com.kaooak.android.homebookkeeping.R;
 import com.kaooak.android.homebookkeeping.database.DbAsyncQueryHandler;
 import com.kaooak.android.homebookkeeping.database.DbContract;
-import com.kaooak.android.homebookkeeping.fragments.AccountFragment;
-import com.kaooak.android.homebookkeeping.fragments.AccountTransactionFragment;
+
+import java.math.BigDecimal;
 
 public class AccountActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
@@ -60,7 +57,7 @@ public class AccountActivity extends AppCompatActivity implements LoaderManager.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_account);
+        setContentView(R.layout.activity_account);
 
         Log.d(TAG, "onCreate: ");
 
@@ -76,10 +73,15 @@ public class AccountActivity extends AppCompatActivity implements LoaderManager.
         mBtnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                String name = mEtAccountName.getText().toString();
+                long currency = mSpinnerAccountCurrenncy.getSelectedItemId();
+                int startValue = (int)(Double.valueOf(mEtAccountStartValue.getText().toString()) * 100);
+
                 ContentValues contentValues = new ContentValues();
-                contentValues.put(DbContract.AccountsTable.Columns.NAME, mEtAccountName.getText().toString());
-                contentValues.put(DbContract.AccountsTable.Columns.CURRENCY, mSpinnerAccountCurrenncy.getSelectedItemId());
-                contentValues.put(DbContract.AccountsTable.Columns.START_VALUE, mEtAccountStartValue.getText().toString());
+                contentValues.put(DbContract.AccountsTable.Columns.NAME, name);
+                contentValues.put(DbContract.AccountsTable.Columns.CURRENCY, currency);
+                contentValues.put(DbContract.AccountsTable.Columns.START_VALUE, startValue);
 
                 if (mUri == null) {
                     DbAsyncQueryHandler handler = new DbAsyncQueryHandler(getContentResolver());
@@ -193,13 +195,12 @@ public class AccountActivity extends AppCompatActivity implements LoaderManager.
 
             String name = data.getString(data.getColumnIndex(DbContract.AccountsTable.Columns.NAME));
             int currency = data.getInt(data.getColumnIndex(DbContract.AccountsTable.Columns.CURRENCY));
-            String startValue = data.getString(data.getColumnIndex(DbContract.AccountsTable.Columns.START_VALUE));
+            String startValue = String.valueOf(data.getInt(data.getColumnIndex(DbContract.AccountsTable.Columns.START_VALUE)) / 100.0);
 
             mEtAccountName.setText(name);
             mSpinnerAccountCurrenncy.setSelection(currency);
             mEtAccountStartValue.setText(startValue);
         }
-
     }
 
     @Override
