@@ -141,14 +141,4 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
     }
-
-    private ContentValues two(Transaction transaction) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(DbContract.TransactionsTable.Columns.DATE, transaction.getDate());
-        contentValues.put(DbContract.TransactionsTable.Columns.ACCOUNT_ID, transaction.getAccountOneUUID());
-        contentValues.put(DbContract.TransactionsTable.Columns.CURRENCY, transaction.getCurrency());
-        contentValues.put(DbContract.TransactionsTable.Columns.VALUE, transaction.getValue());
-        contentValues.put(DbContract.TransactionsTable.Columns.COMMENT, transaction.getComment());
-        return contentValues;
-    }
 }

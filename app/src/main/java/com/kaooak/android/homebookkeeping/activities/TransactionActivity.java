@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,14 +25,24 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.kaooak.android.homebookkeeping.R;
+import com.kaooak.android.homebookkeeping.ValuesSingleton;
 import com.kaooak.android.homebookkeeping.data.Currencies;
+import com.kaooak.android.homebookkeeping.data.JSON.GsonData;
+import com.kaooak.android.homebookkeeping.data.RetrofitCBR;
+import com.kaooak.android.homebookkeeping.data.Transaction;
 import com.kaooak.android.homebookkeeping.database.DbAsyncQueryHandler;
 import com.kaooak.android.homebookkeeping.database.DbContract;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class TransactionActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
@@ -89,38 +100,17 @@ public class TransactionActivity extends AppCompatActivity implements LoaderMana
             @Override
             public void onClick(View view) {
 
+                long millis = new Date().getTime();
                 int value = (int)(Double.valueOf(mEtTransactionValue.getText().toString()) * 100);
                 int currency = (int) mSpinnerTransactionCurrency.getSelectedItemId();
                 String comment= mEtTransactionComment.getText().toString();
 
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(DbContract.TransactionsTable.Columns.VALUE, value);
-                contentValues.put(DbContract.TransactionsTable.Columns.CURRENCY, currency);
-                switch (currency) {
-                    case Currencies.CURRENCY_RUB:
-                        contentValues.put(DbContract.TransactionsTable.Columns.CURRENCY_VALUE, 100);
-                        break;
-                    case Currencies.CURRENCY_DOLLAR:
-                        contentValues.put(DbContract.TransactionsTable.Columns.CURRENCY_VALUE, 222);
-                        break;
-                    case Currencies.CURRENCY_EURO:
-                        contentValues.put(DbContract.TransactionsTable.Columns.CURRENCY_VALUE, 333);
-                        break;
-                }
-                contentValues.put(DbContract.TransactionsTable.Columns.COMMENT, comment);
+                Transaction transaction = new Transaction(millis, mAccountId, currency, value, comment);
 
-                if (mUri == null) {
-                    contentValues.put(DbContract.TransactionsTable.Columns.DATE, new Date().getTime());
-                    contentValues.put(DbContract.TransactionsTable.Columns.ACCOUNT_ID, mAccountId);
+                RetrofitAsyncTask retrofitAsyncTask = new RetrofitAsyncTask();
+                retrofitAsyncTask.execute(transaction);
 
-                    DbAsyncQueryHandler handler = new DbAsyncQueryHandler(getContentResolver());
-                    handler.startInsert(0, null, DbContract.TransactionsTable.CONTENT_URI, contentValues);
-                } else {
-                    DbAsyncQueryHandler handler = new DbAsyncQueryHandler(getContentResolver());
-                    handler.startUpdate(0, null, mUri, contentValues, null, null);
-                }
-
-                finish();
+//                finish();
             }
         });
 
@@ -136,21 +126,16 @@ public class TransactionActivity extends AppCompatActivity implements LoaderMana
             mBtnSave.setText("Сохранить");
             getSupportLoaderManager().initLoader(0, null, this);
         }
-
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        Fragment fragment_account = fragmentManager.findFragmentById(R.id.container_fragment);
-//        if (fragment_account == null) {
-//            fragment_account = TransactionFragment.newInstance(uuid);
-//            fragmentManager.beginTransaction()
-//                    .add(R.id.container_fragment, fragment_account)
-//                    .commit();
-//        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_transaction, menu);
-        return true;
+        if (mUri == null) {
+            return true;
+        } else {
+            getMenuInflater().inflate(R.menu.menu_transaction, menu);
+            return true;
+        }
     }
 
     @Override
@@ -198,5 +183,77 @@ public class TransactionActivity extends AppCompatActivity implements LoaderMana
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         Log.d(TAG, "onLoaderReset: ");
 
+    }
+
+    //
+    private class RetrofitAsyncTask extends AsyncTask<Transaction, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Transaction... transactions) {
+
+            Date date = transactions[0].getDate();
+            long accountId = transactions[0].getAccountId();
+            int value = transactions[0].getValue();
+            int currency = transactions[0].getCurrency();
+            String comment = transactions[0].getComment();
+
+            //
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(DbContract.TransactionsTable.Columns.DATE, date.getTime());
+
+            String strDate = DateFormat.format("yyyy/MM/dd", date).toString();
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("https://www.cbr-xml-daily.ru/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            RetrofitCBR retrofitCBR = retrofit.create(RetrofitCBR.class);
+
+            Call<GsonData> cur = retrofitCBR.getData(strDate);
+
+            GsonData gsonData;
+            try {
+                gsonData = cur.execute().body();
+            } catch (Exception e) {
+                return false;
+            }
+
+            //
+            contentValues.put(DbContract.TransactionsTable.Columns.VALUE, value);
+            contentValues.put(DbContract.TransactionsTable.Columns.CURRENCY, currency);
+            switch (currency) {
+                case Currencies.CURRENCY_RUB:
+                    contentValues.put(DbContract.TransactionsTable.Columns.CURRENCY_VALUE, 100);
+                    break;
+                case Currencies.CURRENCY_DOLLAR:
+                    contentValues.put(DbContract.TransactionsTable.Columns.CURRENCY_VALUE, gsonData.getValute().getUSD().getValue() * 100);
+                    break;
+                case Currencies.CURRENCY_EURO:
+                    contentValues.put(DbContract.TransactionsTable.Columns.CURRENCY_VALUE, gsonData.getValute().getEUR().getValue() * 100);
+                    break;
+            }
+            contentValues.put(DbContract.TransactionsTable.Columns.COMMENT, comment);
+
+            if (mUri == null) {
+                contentValues.put(DbContract.TransactionsTable.Columns.ACCOUNT_ID, accountId);
+
+                getContentResolver().insert(DbContract.TransactionsTable.CONTENT_URI, contentValues);
+            } else {
+                getContentResolver().update(mUri, contentValues, null, null);
+            }
+
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+
+            if (aBoolean) {
+                finish();
+            } else {
+                Toast.makeText(getApplicationContext(), "Для работы с другими валютами необходимо подключение к интернету", Toast.LENGTH_LONG).show();
+            }
+
+        }
     }
 }

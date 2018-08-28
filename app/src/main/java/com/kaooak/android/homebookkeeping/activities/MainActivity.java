@@ -31,13 +31,15 @@ import com.kaooak.android.homebookkeeping.ValuesSingleton;
 import com.kaooak.android.homebookkeeping.adapter.TransactionItemAdapter;
 import com.kaooak.android.homebookkeeping.data.Currencies;
 import com.kaooak.android.homebookkeeping.data.JSON.GsonData;
-import com.kaooak.android.homebookkeeping.data.RetrofitCB;
+import com.kaooak.android.homebookkeeping.data.RetrofitCBR;
 import com.kaooak.android.homebookkeeping.database.DbContract;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -227,11 +229,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                             break;
                         case Currencies.CURRENCY_DOLLAR:
                             currencyStr = " долларов ";
-                            rubCurrentValueBd = startValueBd.multiply(new BigDecimal("2.22"));
+                            rubCurrentValueBd = startValueBd.multiply(new BigDecimal(String.valueOf(ValuesSingleton.getmValueUSD())));
                             break;
                         case Currencies.CURRENCY_EURO:
                             currencyStr = " евро ";
-                            rubCurrentValueBd = startValueBd.multiply(new BigDecimal("3.33"));
+                            rubCurrentValueBd = startValueBd.multiply(new BigDecimal(String.valueOf(ValuesSingleton.getmValueEUR())));
                             break;
                         default:
                             currencyStr = " рублей ";
@@ -255,11 +257,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                             break;
                         case Currencies.CURRENCY_DOLLAR:
                             currencyStr = " долларов ";
-                            currentValue = rubCurrentValueBd.divide(new BigDecimal("2.22"), RoundingMode.HALF_UP);
+                            currentValue = rubCurrentValueBd.divide(new BigDecimal(String.valueOf(ValuesSingleton.getmValueUSD())), RoundingMode.HALF_UP);
                             break;
                         case Currencies.CURRENCY_EURO:
                             currencyStr = " евро ";
-                            currentValue = rubCurrentValueBd.divide(new BigDecimal("3.33"), RoundingMode.HALF_UP);
+                            currentValue = rubCurrentValueBd.divide(new BigDecimal(String.valueOf(ValuesSingleton.getmValueEUR())), RoundingMode.HALF_UP);
                             break;
                         default:
                             currencyStr = " рублей ";
@@ -287,48 +289,39 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-    private class RetrofitAsyncTask extends AsyncTask<String, Void, GsonData> {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://www.cbr-xml-daily.ru/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
 
-        @Override
-        protected GsonData doInBackground(String... strings) {
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("https://www.cbr-xml-daily.ru/")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
+        RetrofitCBR retrofitCBR = retrofit.create(RetrofitCBR.class);
 
-            RetrofitCB retrofitCB = retrofit.create(RetrofitCB.class);
+        Call<GsonData> cur = retrofitCBR.getTodayData();
+        cur.enqueue(new Callback<GsonData>() {
+            @Override
+            public void onResponse(Call<GsonData> call, Response<GsonData> response) {
+                if (response.isSuccessful()) {
+                    GsonData gsonData = response.body();
 
-            Call<GsonData> cur = retrofitCB.getData();
+                    double valueUSD = gsonData.getValute().getUSD().getValue();
+                    double valueEUR = gsonData.getValute().getEUR().getValue();
 
-            try {
-                GsonData gsonData = cur.execute().body();
-                return gsonData;
-            } catch (Exception e) {
-                return null;
+                    ValuesSingleton.setmValueRUB(1);
+                    ValuesSingleton.setmValueUSD(valueUSD);
+                    ValuesSingleton.setmValueEUR(valueEUR);
+                }
+                else
+                    Log.d(TAG, "onResponse: " + response.errorBody().toString() + " is NOT successful");
             }
-        }
 
-        @Override
-        protected synchronized void onPostExecute(GsonData gsonData) {
-            super.onPostExecute(gsonData);
-
-            if (gsonData != null) {
-                double valueUSD = gsonData.getValute().getUSD().getValue();
-                double valueEUR = gsonData.getValute().getEUR().getValue();
-
-                ValuesSingleton.setmValueRUB(1);
-                ValuesSingleton.setmValueUSD(valueUSD);
-                ValuesSingleton.setmValueEUR(valueEUR);
-
-//                if (currentFragment == 0) {
-//                    AccountsListFragment accountsListFragment = (AccountsListFragment) getSupportFragmentManager().findFragmentById(R.id.container_fragment);
-//                    accountsListFragment.updateView();
-//                }
-            } else {
+            @Override
+            public void onFailure(Call<GsonData> call, Throwable t) {
                 Toast.makeText(getApplicationContext(), "Для работы с другими валютами необходимо подключение к интернету", Toast.LENGTH_LONG).show();
             }
-        }
-
+        });
     }
 }
