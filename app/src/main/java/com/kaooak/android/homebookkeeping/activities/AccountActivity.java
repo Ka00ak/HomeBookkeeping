@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,10 +24,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.kaooak.android.homebookkeeping.R;
+import com.kaooak.android.homebookkeeping.DecimalFilter;
 import com.kaooak.android.homebookkeeping.database.DbAsyncQueryHandler;
 import com.kaooak.android.homebookkeeping.database.DbContract;
-
-import java.math.BigDecimal;
 
 public class AccountActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
@@ -67,8 +67,12 @@ public class AccountActivity extends AppCompatActivity implements LoaderManager.
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         mEtAccountName = findViewById(R.id.et_account_name);
+
         mSpinnerAccountCurrenncy = findViewById(R.id.spinner_account_currency);
+
         mEtAccountStartValue = findViewById(R.id.et_account_start_value);
+        mEtAccountStartValue.setFilters(new InputFilter[]{ new DecimalFilter(9, 2) });
+
         mBtnSave = findViewById(R.id.btn_account_save);
         mBtnSave.setOnClickListener(new View.OnClickListener() {
             @Override

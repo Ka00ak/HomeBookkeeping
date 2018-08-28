@@ -86,12 +86,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 this,
                 android.R.layout.simple_spinner_item,
                 null,
-                new String[] {
-                        DbContract.AccountsTable.Columns.NAME
-                },
-                new int[] {
-                        android.R.id.text1,
-                },
+                new String[] { DbContract.AccountsTable.Columns.NAME },
+                new int[] { android.R.id.text1 },
                 0);
         mSimpleCursorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner = toolbar.findViewById(R.id.spinner_accounts);

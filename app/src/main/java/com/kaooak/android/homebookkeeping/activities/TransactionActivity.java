@@ -1,7 +1,5 @@
 package com.kaooak.android.homebookkeeping.activities;
 
-import android.content.ContentProviderOperation;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -11,13 +9,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputFilter;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
@@ -29,7 +27,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.kaooak.android.homebookkeeping.R;
-import com.kaooak.android.homebookkeeping.ValuesSingleton;
+import com.kaooak.android.homebookkeeping.DecimalFilter;
 import com.kaooak.android.homebookkeeping.data.Currencies;
 import com.kaooak.android.homebookkeeping.data.JSON.GsonData;
 import com.kaooak.android.homebookkeeping.data.RetrofitCBR;
@@ -37,8 +35,7 @@ import com.kaooak.android.homebookkeeping.data.Transaction;
 import com.kaooak.android.homebookkeeping.database.DbAsyncQueryHandler;
 import com.kaooak.android.homebookkeeping.database.DbContract;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import retrofit2.Call;
@@ -99,8 +96,12 @@ public class TransactionActivity extends AppCompatActivity implements LoaderMana
         });
 
         mEtTransactionValue = findViewById(R.id.et_transaction_value);
+        mEtTransactionValue.setFilters(new InputFilter[]{ new DecimalFilter(9, 2) });
+
         mSpinnerTransactionCurrency = findViewById(R.id.spinner_transaction_currency);
+
         mEtTransactionComment = findViewById(R.id.et_transaction_comment);
+
         mBtnSave = findViewById(R.id.btn_transaction_save);
         mBtnSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -181,6 +182,7 @@ public class TransactionActivity extends AppCompatActivity implements LoaderMana
             int currency = data.getInt(data.getColumnIndex(DbContract.TransactionsTable.Columns.CURRENCY));
             String comment = data.getString(data.getColumnIndex(DbContract.TransactionsTable.Columns.COMMENT));
 
+            mMillis = millis;
             mBtnTransactionDate.setText(dateStr);
             mEtTransactionValue.setText(value);
             mSpinnerTransactionCurrency.setSelection(currency);
