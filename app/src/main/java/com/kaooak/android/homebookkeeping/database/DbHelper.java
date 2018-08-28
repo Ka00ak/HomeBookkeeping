@@ -19,9 +19,14 @@ public class DbHelper extends SQLiteOpenHelper {
                     "accounts.name," +
                     "accounts.currency," +
                     "accounts.startValue, " +
-                    "SUM(case when transactions.value >= 0 then (transactions.value * transactions.currencyValue) else 0 end) AS plusValue, " +
-                    "SUM(case when transactions.value < 0 then (transactions.value * transactions.currencyValue)  else 0 end) AS minusValue " +
-//                    "ifnull(accounts.startValue + SUM(transactions.value), accounts.startValue) AS currentValue " +
+                    "SUM(case when (transactions.currency = accounts.currency AND transactions.value >= 0) " +
+                        "then transactions.value else 0 end) AS plusMainValue, " +
+                    "SUM(case when (transactions.currency = accounts.currency AND transactions.value < 0) " +
+                            "then transactions.value else 0 end) AS minusMainValue, " +
+                    "SUM(case when (transactions.currency != accounts.currency AND transactions.value >= 0) " +
+                            "then (transactions.value * transactions.currencyValue) else 0 end) AS plusValue, " +
+                    "SUM(case when (transactions.currency != accounts.currency AND transactions.value < 0) " +
+                            "then (transactions.value * transactions.currencyValue)  else 0 end) AS minusValue " +
             "FROM accounts " +
                     "LEFT JOIN transactions ON accounts._id = transactions.accountId " +
             "GROUP BY accounts._id";
@@ -31,9 +36,14 @@ public class DbHelper extends SQLiteOpenHelper {
                     "accounts.name," +
                     "accounts.currency," +
                     "accounts.startValue, " +
-                    "SUM(case when transactions.value >= 0 then (transactions.value * transactions.currencyValue) else 0 end) AS plusValue, " +
-                    "SUM(case when transactions.value < 0 then (transactions.value * transactions.currencyValue)  else 0 end) AS minusValue " +
-//                    "ifnull(accounts.startValue + SUM(transactions.value), accounts.startValue) AS currentValue " +
+                    "SUM(case when (transactions.currency = accounts.currency AND transactions.value >= 0) " +
+                        "then transactions.value else 0 end) AS plusMainValue, " +
+                    "SUM(case when (transactions.currency = accounts.currency AND transactions.value < 0) " +
+                        "then transactions.value else 0 end) AS minusMainValue, " +
+                    "SUM(case when (transactions.currency != accounts.currency AND transactions.value >= 0) " +
+                        "then (transactions.value * transactions.currencyValue) else 0 end) AS plusValue, " +
+                    "SUM(case when (transactions.currency != accounts.currency AND transactions.value < 0) " +
+                        "then (transactions.value * transactions.currencyValue)  else 0 end) AS minusValue " +
             "FROM accounts " +
                     "LEFT JOIN transactions ON accounts._id = transactions.accountId " +
                     "WHERE accounts._id = ? " +

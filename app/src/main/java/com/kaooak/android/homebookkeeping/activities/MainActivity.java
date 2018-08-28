@@ -213,26 +213,25 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     data.moveToFirst();
 
                     int startValue = data.getInt(data.getColumnIndex("startValue"));
-                    BigDecimal startValueBd = new BigDecimal(String.valueOf(startValue / 100.0));
+                    int plusMainValue = data.getInt(data.getColumnIndex("plusMainValue"));
+                    int minusMainValue = data.getInt(data.getColumnIndex("minusMainValue"));
+
+                    BigDecimal startValueBd = new BigDecimal(String.valueOf((startValue + plusMainValue + minusMainValue) / 100.0));
                     BigDecimal rubCurrentValueBd;
 
                     mAccountCurrency = data.getInt(data.getColumnIndex(DbContract.AccountsTable.Columns.CURRENCY));
                     String currencyStr;
                     switch (mAccountCurrency) {
                         case Currencies.CURRENCY_RUB:
-                            currencyStr = " рублей ";
                             rubCurrentValueBd = startValueBd;
                             break;
                         case Currencies.CURRENCY_DOLLAR:
-                            currencyStr = " долларов ";
                             rubCurrentValueBd = startValueBd.multiply(new BigDecimal(String.valueOf(ValuesSingleton.getmValueUSD())));
                             break;
                         case Currencies.CURRENCY_EURO:
-                            currencyStr = " евро ";
                             rubCurrentValueBd = startValueBd.multiply(new BigDecimal(String.valueOf(ValuesSingleton.getmValueEUR())));
                             break;
                         default:
-                            currencyStr = " рублей ";
                             rubCurrentValueBd = startValueBd;
                             break;
                     }
