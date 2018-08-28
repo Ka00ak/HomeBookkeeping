@@ -44,6 +44,14 @@ public class DbHelper extends SQLiteOpenHelper {
         super(context, DB_NAME, null, VERSION);
     }
 
+
+    @Override
+    public void onConfigure(SQLiteDatabase db) {
+        super.onConfigure(db);
+
+        db.setForeignKeyConstraintsEnabled(true);
+    }
+
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(
@@ -79,7 +87,8 @@ public class DbHelper extends SQLiteOpenHelper {
                         DbContract.TransactionsTable.Columns.CURRENCY + ", " +
                         DbContract.TransactionsTable.Columns.CURRENCY_VALUE + ", " +
                         DbContract.TransactionsTable.Columns.VALUE + ", " +
-                        DbContract.TransactionsTable.Columns.COMMENT + ")");
+                        DbContract.TransactionsTable.Columns.COMMENT + ", " +
+                        "CONSTRAINT account_id_foreign_key FOREIGN KEY (accountId) REFERENCES accounts (_id) ON DELETE CASCADE ON UPDATE CASCADE )");
 
 //        Transaction t = new Transaction(account.getUUID(), TransactionTypes.TYPE_PLUS, new Date().getTime(), 300.00, Currencies.CURRENCY_RUB, "Просто плюс 300.00 рублей", TransactionTypes.TYPE_PLUS);
         ContentValues cv = new ContentValues();
