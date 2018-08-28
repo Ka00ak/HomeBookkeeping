@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -44,13 +45,17 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class TransactionActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class TransactionActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, DateFragment.OnCallbacksListener{
 
     private static final String TAG = TransactionActivity.class.getSimpleName();
 
     private static final String EXTRA_ACCOUNT_ID = "com.kaooak.android.homebookkeeping.activities.transactionactivity.extra.accountid";
     private static final String EXTRA_ACCOUNT_CURRENT_VALUE = "com.kaooak.android.homebookkeeping.activities.transactionactivity.extra.accountcurrentvalue";
     private static final String EXTRA_ACCOUNT_CURRENCY = "com.kaooak.android.homebookkeeping.activities.transactionactivity.extra.accountcurrency";
+
+    private static final String TAG_DIALOG_DATE = "dialogDate";
+
+//    private static final int REQUEST_DIALOG_DATE = 0;
 
     private Button mBtnTransactionDate;
     private EditText mEtTransactionValue;
@@ -61,8 +66,8 @@ public class TransactionActivity extends AppCompatActivity implements LoaderMana
     private Uri mUri;
 
     private long mAccountId;
-    private int mAccountCurrentValue;
-    private int mAccountCurrency;
+
+    private long mMillis;
 
     public static Intent getIntent(Context context, Uri uri, long accountId, int accountCurrentValue, int accountCurrency) {
         Log.d(TAG, "getIntent: ");
@@ -88,7 +93,8 @@ public class TransactionActivity extends AppCompatActivity implements LoaderMana
         mBtnTransactionDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                DateFragment dateFragment = DateFragment.newInstance(new Date().getTime());
+                dateFragment.show(getSupportFragmentManager(), TAG_DIALOG_DATE);
             }
         });
 
@@ -99,8 +105,7 @@ public class TransactionActivity extends AppCompatActivity implements LoaderMana
         mBtnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                long millis = new Date().getTime();
+                long millis = mMillis;
                 int value = (int)(Double.valueOf(mEtTransactionValue.getText().toString()) * 100);
                 int currency = (int) mSpinnerTransactionCurrency.getSelectedItemId();
                 String comment= mEtTransactionComment.getText().toString();
@@ -109,16 +114,12 @@ public class TransactionActivity extends AppCompatActivity implements LoaderMana
 
                 RetrofitAsyncTask retrofitAsyncTask = new RetrofitAsyncTask();
                 retrofitAsyncTask.execute(transaction);
-
-//                finish();
             }
         });
 
         Intent intent = getIntent();
         mUri = intent.getData();
         mAccountId = intent.getLongExtra(EXTRA_ACCOUNT_ID, 0);
-        mAccountCurrentValue = intent.getIntExtra(EXTRA_ACCOUNT_CURRENT_VALUE, 0);
-        mAccountCurrency = intent.getIntExtra(EXTRA_ACCOUNT_CURRENCY, 0);
 
         if (mUri == null) {
             mBtnSave.setText("Создать");
@@ -152,6 +153,14 @@ public class TransactionActivity extends AppCompatActivity implements LoaderMana
     }
 
     //
+    @Override
+    public void onDatePicked(long millis) {
+        mMillis = millis;
+        String millisStr = DateFormat.format("dd.MM.yyyy", millis).toString();
+        mBtnTransactionDate.setText(millisStr);
+    }
+
+    //
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
@@ -182,7 +191,6 @@ public class TransactionActivity extends AppCompatActivity implements LoaderMana
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         Log.d(TAG, "onLoaderReset: ");
-
     }
 
     //
