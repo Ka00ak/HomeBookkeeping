@@ -23,9 +23,9 @@ public class DbHelper extends SQLiteOpenHelper {
                         "then transactions.value else 0 end) AS plusMainValue, " +
                     "SUM(case when (transactions.currency = accounts.currency AND transactions.value < 0) " +
                             "then transactions.value else 0 end) AS minusMainValue, " +
-                    "SUM(case when (transactions.currency != accounts.currency AND transactions.value >= 0) " +
+                    "SUM(case when (transactions.currency <> accounts.currency AND transactions.value >= 0) " +
                             "then (transactions.value * transactions.currencyValue) else 0 end) AS plusValue, " +
-                    "SUM(case when (transactions.currency != accounts.currency AND transactions.value < 0) " +
+                    "SUM(case when (transactions.currency <> accounts.currency AND transactions.value < 0) " +
                             "then (transactions.value * transactions.currencyValue)  else 0 end) AS minusValue " +
             "FROM accounts " +
                     "LEFT JOIN transactions ON accounts._id = transactions.accountId " +
@@ -40,9 +40,9 @@ public class DbHelper extends SQLiteOpenHelper {
                         "then transactions.value else 0 end) AS plusMainValue, " +
                     "SUM(case when (transactions.currency = accounts.currency AND transactions.value < 0) " +
                         "then transactions.value else 0 end) AS minusMainValue, " +
-                    "SUM(case when (transactions.currency != accounts.currency AND transactions.value >= 0) " +
+                    "SUM(case when (transactions.currency <> accounts.currency AND transactions.value >= 0) " +
                         "then (transactions.value * transactions.currencyValue) else 0 end) AS plusValue, " +
-                    "SUM(case when (transactions.currency != accounts.currency AND transactions.value < 0) " +
+                    "SUM(case when (transactions.currency <> accounts.currency AND transactions.value < 0) " +
                         "then (transactions.value * transactions.currencyValue)  else 0 end) AS minusValue " +
             "FROM accounts " +
                     "LEFT JOIN transactions ON accounts._id = transactions.accountId " +
@@ -100,7 +100,6 @@ public class DbHelper extends SQLiteOpenHelper {
                         DbContract.TransactionsTable.Columns.COMMENT + ", " +
                         "CONSTRAINT account_id_foreign_key FOREIGN KEY (accountId) REFERENCES accounts (_id) ON DELETE CASCADE ON UPDATE CASCADE )");
 
-//        Transaction t = new Transaction(account.getUUID(), TransactionTypes.TYPE_PLUS, new Date().getTime(), 300.00, Currencies.CURRENCY_RUB, "Просто плюс 300.00 рублей", TransactionTypes.TYPE_PLUS);
         ContentValues cv = new ContentValues();
         cv.put(DbContract.TransactionsTable.Columns.DATE, new Date().getTime());
         cv.put(DbContract.TransactionsTable.Columns.ACCOUNT_ID, oneA);
@@ -127,33 +126,6 @@ public class DbHelper extends SQLiteOpenHelper {
         cv3.put(DbContract.TransactionsTable.Columns.VALUE, 4564);
         cv3.put(DbContract.TransactionsTable.Columns.COMMENT, "коммент 3");
         sqLiteDatabase.insert(DbContract.TransactionsTable.NAME, null, cv3);
-
-//        Transaction t2 = new Transaction(account.getUUID(), new Date().getTime(), 5.00, Currencies.CURRENCY_EURO, "Просто минус 5.00 евро", TransactionTypes.TYPE_MINUS);
-//        ContentValues cv2 = two(t2);
-//        sqLiteDatabase.insert(DbContract.TransactionsTable.NAME, null, cv2);
-//
-//        Transaction t3 = new Transaction(account2.getUUID(), new Date().getTime(), 10.54, Currencies.CURRENCY_EURO, "Просто минус 10.54 евро", TransactionTypes.TYPE_MINUS);
-//        ContentValues cv3 = two(t3);
-//        sqLiteDatabase.insert(DbContract.TransactionsTable.NAME, null, cv3);
-//
-//        Transaction t4 = new Transaction(account2.getUUID(), new Date().getTime(), 13.99, Currencies.CURRENCY_EURO, "Просто плюс 13.99 евро", TransactionTypes.TYPE_PLUS);
-//        ContentValues cv4 = two(t4);
-//        sqLiteDatabase.insert(DbContract.TransactionsTable.NAME, null, cv4);
-//
-//        Transaction t5 = new Transaction(account3.getUUID(), new Date().getTime(), 15.96, Currencies.CURRENCY_DOLLAR, "Просто плюс 15.96 долларов", TransactionTypes.TYPE_PLUS);
-//        ContentValues cv5 = two(t5);
-//        sqLiteDatabase.insert(DbContract.TransactionsTable.NAME, null, cv5);
-//
-//        Transaction t6 = new Transaction(account3.getUUID(), new Date().getTime(), 1700.02, Currencies.CURRENCY_RUB, "Просто минус 1700.02 рублей", TransactionTypes.TYPE_MINUS);
-//        ContentValues cv6 = two(t6);
-//        sqLiteDatabase.insert(DbContract.TransactionsTable.NAME, null, cv6);
-//
-//        Transaction t7 = new Transaction(account.getUUID(), new Date().getTime(), 7.48, Currencies.CURRENCY_DOLLAR, "Перевод на \"Счёт 3\" (7.48 долларов)", TransactionTypes.TYPE_MINUS);
-//        ContentValues cv7 = two(t7);
-//        sqLiteDatabase.insert(DbContract.TransactionsTable.NAME, null, cv7);
-//        Transaction t8 = new Transaction(account3.getUUID(), new Date().getTime(), 7.48, Currencies.CURRENCY_DOLLAR, "Перевод от \"Счёт 1\" (7.48 долларов)", TransactionTypes.TYPE_PLUS);
-//        ContentValues cv8 = two(t8);
-//        sqLiteDatabase.insert(DbContract.TransactionsTable.NAME, null, cv8);
     }
 
     @Override

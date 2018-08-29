@@ -1,29 +1,31 @@
 package com.kaooak.android.homebookkeeping;
 
+import java.math.BigDecimal;
+
 public class ValuesSingleton {
 
-    private static double mValueRUB = 1;
-    private static double mValueUSD = 1;
-    private static double mValueEUR = 1;
+    private static BigDecimal mValueRUB = new BigDecimal(1);
+    private static BigDecimal mValueUSD = new BigDecimal(1);
+    private static BigDecimal mValueEUR = new BigDecimal(1);
 
-    public static double getmValueRUB() {
+    public static BigDecimal getmValueRUB() {
         return mValueRUB;
     }
-    public static void setmValueRUB(double mValueRUB) {
+    public static void setmValueRUB(BigDecimal mValueRUB) {
         ValuesSingleton.mValueRUB = mValueRUB;
     }
 
-    public static double getmValueUSD() {
+    public static BigDecimal getmValueUSD() {
         return mValueUSD;
     }
-    public static void setmValueUSD(double mValueUSD) {
+    public static void setmValueUSD(BigDecimal mValueUSD) {
         ValuesSingleton.mValueUSD = mValueUSD;
     }
 
-    public static double getmValueEUR() {
+    public static BigDecimal getmValueEUR() {
         return mValueEUR;
     }
-    public static void setmValueEUR(double mValueEUR) {
+    public static void setmValueEUR(BigDecimal mValueEUR) {
         ValuesSingleton.mValueEUR = mValueEUR;
     }
 }

@@ -14,6 +14,7 @@ import com.kaooak.android.homebookkeeping.data.Currencies;
 import com.kaooak.android.homebookkeeping.database.DbContract;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 public class TransactionItemAdapter extends CursorAdapter {
@@ -48,19 +49,21 @@ public class TransactionItemAdapter extends CursorAdapter {
         BigDecimal valueBd = new BigDecimal(String.valueOf(value / 100.0));
         BigDecimal currencyValueBd = new BigDecimal(String.valueOf(currencyValue / 100.0));
 
+        BigDecimal currencyValueRubBd = valueBd.multiply(currencyValueBd).setScale(2, RoundingMode.HALF_EVEN);
+
         String valueStr;
         switch (currency) {
             case Currencies.CURRENCY_RUB:
-                valueStr = valueBd + " рублей ";
+                valueStr = valueBd.setScale(2, RoundingMode.HALF_EVEN) + " рублей ";
                 break;
             case Currencies.CURRENCY_DOLLAR:
-                valueStr = valueBd + " долларов (" + valueBd.multiply(currencyValueBd) + " рублей)";
+                valueStr = valueBd.setScale(2, RoundingMode.HALF_EVEN) + " долларов (" + currencyValueRubBd + " рублей)";
                 break;
             case Currencies.CURRENCY_EURO:
-                valueStr = valueBd + " евро (" + valueBd.multiply(currencyValueBd) + " рублей)";
+                valueStr = valueBd.setScale(2, RoundingMode.HALF_EVEN) + " евро (" + currencyValueRubBd + " рублей)";
                 break;
             default:
-                valueStr = valueBd + " рублей ";
+                valueStr = valueBd.setScale(2, RoundingMode.HALF_EVEN) + " рублей ";
                 break;
         }
 

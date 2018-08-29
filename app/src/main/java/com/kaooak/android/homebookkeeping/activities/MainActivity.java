@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private SimpleCursorAdapter mSimpleCursorAdapter;
 
-    private TextView mTvAccountName;
     private TextView mTvAccountCurrentValue;
 
     private ListView mListView;
@@ -79,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
 
-        mTvAccountName = findViewById(R.id.tv_account_name);
         mTvAccountCurrentValue = findViewById(R.id.tv_account_current_value);
 
         mSimpleCursorAdapter = new SimpleCursorAdapter (
@@ -223,16 +221,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     String currencyStr;
                     switch (mAccountCurrency) {
                         case Currencies.CURRENCY_RUB:
-                            rubCurrentValueBd = startValueBd;
+                            rubCurrentValueBd = startValueBd.setScale(2, RoundingMode.HALF_EVEN);
                             break;
                         case Currencies.CURRENCY_DOLLAR:
-                            rubCurrentValueBd = startValueBd.multiply(new BigDecimal(String.valueOf(ValuesSingleton.getmValueUSD())));
+                            rubCurrentValueBd = startValueBd.multiply(ValuesSingleton.getmValueUSD()).setScale(2, RoundingMode.HALF_EVEN);
                             break;
                         case Currencies.CURRENCY_EURO:
-                            rubCurrentValueBd = startValueBd.multiply(new BigDecimal(String.valueOf(ValuesSingleton.getmValueEUR())));
+                            rubCurrentValueBd = startValueBd.multiply(ValuesSingleton.getmValueEUR()).setScale(2, RoundingMode.HALF_EVEN);
                             break;
                         default:
-                            rubCurrentValueBd = startValueBd;
+                            rubCurrentValueBd = startValueBd.setScale(2, RoundingMode.HALF_EVEN);;
                             break;
                     }
 
@@ -252,11 +250,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                             break;
                         case Currencies.CURRENCY_DOLLAR:
                             currencyStr = " долларов ";
-                            currentValue = rubCurrentValueBd.divide(new BigDecimal(String.valueOf(ValuesSingleton.getmValueUSD())), RoundingMode.HALF_UP);
+                            currentValue = rubCurrentValueBd.divide(new BigDecimal(String.valueOf(ValuesSingleton.getmValueUSD())),2, RoundingMode.HALF_EVEN);
                             break;
                         case Currencies.CURRENCY_EURO:
                             currencyStr = " евро ";
-                            currentValue = rubCurrentValueBd.divide(new BigDecimal(String.valueOf(ValuesSingleton.getmValueEUR())), RoundingMode.HALF_UP);
+                            currentValue = rubCurrentValueBd.divide(new BigDecimal(String.valueOf(ValuesSingleton.getmValueEUR())),2,  RoundingMode.HALF_EVEN);
                             break;
                         default:
                             currencyStr = " рублей ";
@@ -264,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                             break;
                     }
 
-                    mTvAccountCurrentValue.setText("Состояние счёта: " + currentValue + " " + currencyStr + "(" + rubCurrentValueBd + " рублей)");
+                    mTvAccountCurrentValue.setText("Состояние счёта: " + currentValue + " " + currencyStr + "(" + rubCurrentValueBd.toString() + " рублей)");
                 }
                 break;
         }
@@ -305,9 +303,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     double valueUSD = gsonData.getValute().getUSD().getValue();
                     double valueEUR = gsonData.getValute().getEUR().getValue();
 
-                    ValuesSingleton.setmValueRUB(1);
-                    ValuesSingleton.setmValueUSD(valueUSD);
-                    ValuesSingleton.setmValueEUR(valueEUR);
+                    ValuesSingleton.setmValueRUB(new BigDecimal(1));
+                    ValuesSingleton.setmValueUSD(new BigDecimal(String.valueOf(valueUSD)));
+                    ValuesSingleton.setmValueEUR(new BigDecimal(String.valueOf(valueEUR)));
                 }
                 else
                     Log.d(TAG, "onResponse: " + response.errorBody().toString() + " is NOT successful");

@@ -48,7 +48,6 @@ public class Transaction {
     public long getAccountId() {
         return mAccountId;
     }
-
     public void setAccountId(long accountId) {
         mAccountId = accountId;
     }
@@ -56,7 +55,6 @@ public class Transaction {
     public int getCurrency() {
         return mCurrency;
     }
-
     public void setCurrency(int currency) {
         mCurrency = currency;
     }
@@ -64,7 +62,6 @@ public class Transaction {
     public BigDecimal getCurrencyValue() {
         return mCurrencyValue;
     }
-
     public void setCurrencyValue(BigDecimal currencyValue) {
         mCurrencyValue = currencyValue;
     }
@@ -72,7 +69,6 @@ public class Transaction {
     public int getValue() {
         return mValue;
     }
-
     public void setValue(int value) {
         mValue = value;
     }
@@ -80,7 +76,6 @@ public class Transaction {
     public String getComment() {
         return mComment;
     }
-
     public void setComment(String comment) {
         mComment = comment;
     }
