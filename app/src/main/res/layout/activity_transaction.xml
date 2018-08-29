@@ -5,28 +5,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
-    <RadioGroup
-        android:id="@+id/rgroup_transaction_type"
+    <android.support.v7.widget.Toolbar
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/toolbar_transaction"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <RadioButton
-            android:id="@+id/rbtn_in"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Доход"/>
-
-        <RadioButton
-            android:id="@+id/rbtn_out"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Расход"/>
-
-    </RadioGroup>
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/AppTheme.AppBarOverlay"/>
 
     <TextView
         android:id="@+id/tv_transaction_date"
@@ -39,17 +24,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="01.01.2018"/>
-
-    <TextView
-        android:id="@+id/tv_transaction_account_one"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Счёт"/>
-
-    <Spinner
-        android:id="@+id/spinner_transaction_account_one"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/tv_transaction_value"
@@ -68,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:ems="10"
-            android:inputType="numberDecimal"
+            android:inputType="numberSigned|numberDecimal"
             android:text="300.00"/>
 
         <Spinner
@@ -93,5 +67,11 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Перевод денег"/>
+
+    <Button
+        android:id="@+id/btn_transaction_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Сохранить" />
 
 </LinearLayout>

@@ -1,82 +1,55 @@
 package com.kaooak.android.homebookkeeping.data;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
 
 public class Transaction {
-    private UUID mUUID;
-    private int mType;
+
+    private long mId;
     private Date mDate;
-    private UUID mAccountOneUUID;
-    private UUID mAccountTwoUUID;
-    private double mValue;
+    private long mAccountId;
     private int mCurrency;
-    private double mRate;
+    private BigDecimal mCurrencyValue;
+    private int mValue;
     private String mComment;
 
-    public Transaction(String uuid, int type, long date, String accountOneUuid, String accountTwoUuid, double value, int currency, double rate, String comment) {
-        mUUID = UUID.fromString(uuid);
-        mType = type;
-        mDate = new Date(date);
-        mAccountOneUUID = UUID.fromString(accountOneUuid);
-        mAccountTwoUUID = UUID.fromString(accountTwoUuid);
-        mValue = value;
+    public Transaction(long id, long millis, long accountId, int currency, BigDecimal currencyValue, int value, String comment) {
+        mId = id;
+        mDate = new Date(millis);
+        mAccountId = accountId;
         mCurrency = currency;
-        mRate = rate;
+        mCurrencyValue = currencyValue;
+        mValue = value;
         mComment = comment;
     }
-    public Transaction(int type, long date, String accountOneUuid, String accountTwoUuid, double value, int currency, double rate, String comment) {
-        mUUID = UUID.randomUUID();
-        mType = type;
-        mDate = new Date(date);
-        mAccountOneUUID = UUID.fromString(accountOneUuid);
-        mAccountTwoUUID = UUID.fromString(accountTwoUuid);
-        mValue = value;
+    public Transaction(long millis, long accountId, int currency, int value, String comment) {
+        mDate = new Date(millis);
+        mAccountId = accountId;
         mCurrency = currency;
-        mRate = rate;
+        mValue = value;
         mComment = comment;
     }
 
-    public String getUUID() {
-        return mUUID.toString();
+    public long getId() {
+        return mId;
     }
-    public void setUUID(String uuid) {
-        mUUID = UUID.fromString(uuid);
-    }
-
-    public int getType() {
-        return mType;
-    }
-    public void setType(int type) {
-        mType = type;
+    public void setId(long id) {
+        mId = id;
     }
 
-    public long getDate() {
-        return mDate.getTime();
+    public Date getDate() {
+        return mDate;
     }
-    public void setDate(long date) {
-        mDate = new Date(date);
-    }
-
-    public String getAccountOneUUID() {
-        return mAccountOneUUID.toString();
-    }
-    public void setAccountOneUUID(String accountOneUUID) {
-        mAccountOneUUID = UUID.fromString(accountOneUUID);
+    public void setDate(Date date) {
+        mDate = date;
     }
 
-    public String getAccountTwoUUID() {
-        return mAccountTwoUUID.toString();
+    public long getAccountId() {
+        return mAccountId;
     }
-    public void setAccountTwoUUID(String accountTwoUUID) {
-        mAccountTwoUUID = UUID.fromString(accountTwoUUID);
-    }
-
-    public double getValue() {
-        return mValue;
-    }
-    public void setValue(double value) {
-        mValue = value;
+    public void setAccountId(long accountId) {
+        mAccountId = accountId;
     }
 
     public int getCurrency() {
@@ -86,11 +59,18 @@ public class Transaction {
         mCurrency = currency;
     }
 
-    public double getRate() {
-        return mRate;
+    public BigDecimal getCurrencyValue() {
+        return mCurrencyValue;
     }
-    public void setRate(double rate) {
-        mRate = rate;
+    public void setCurrencyValue(BigDecimal currencyValue) {
+        mCurrencyValue = currencyValue;
+    }
+
+    public int getValue() {
+        return mValue;
+    }
+    public void setValue(int value) {
+        mValue = value;
     }
 
     public String getComment() {
